@@ -1,94 +1,55 @@
-import PropTypes from 'prop-types';
-import { useState } from 'react';
-import { nanoid } from 'nanoid';
-import { showError } from '../utils/notification';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
+import { addContact } from '../../store/contactsSlice';
 
-import css from './ContactForm.module.css';
-
-export const ContactForm = ({ onSubmit }) => {
+const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const handleChange = event => {
-    const { name, value } = event.currentTarget;
+  const dispatch = useDispatch();
 
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
+  const handleSubmit = e => {
+    e.preventDefault();
 
-      case 'number':
-        setNumber(value);
-        break;
-
-      default:
-        return;
-    }
-  };
-
-  const handleSubmit = event => {
-    event.preventDefault();
-
-    if (!name || !number) {
-      showError('Please enter name and number');
+    if (name.trim() === '' || number.trim() === '') {
+      alert('Please enter name and number');
       return;
     }
 
     const newContact = {
-      id: nanoid(),
+      id: uuidv4(),
       name,
       number,
     };
 
-    onSubmit(newContact);
-    reset();
-  };
+    dispatch(addContact(newContact));
 
-  const reset = () => {
     setName('');
     setNumber('');
   };
 
   return (
-    <form onSubmit={handleSubmit} className={css.form}>
-      <label className={css.label}>
+    <form onSubmit={handleSubmit}>
+      <label>
         Name
         <input
           type="text"
-          name="name"
-          className={css.input}
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-          required
-          onChange={handleChange}
           value={name}
-          autoFocus
+          onChange={e => setName(e.target.value)}
         />
       </label>
-
-      <label className={css.label}>
+      <label>
         Number
         <input
-          type="tel"
-          name="number"
-          className={css.input}
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          required
-          onChange={handleChange}
+          type="text"
           value={number}
+          onChange={e => setNumber(e.target.value)}
         />
       </label>
-
-      <button type="submit" className={css.submit_btn}>
-        add contact
-      </button>
+      <button type="submit">Add Contact</button>
     </form>
   );
-};
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };
 
 export default ContactForm;
