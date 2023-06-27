@@ -1,6 +1,6 @@
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteContact } from '../../store/contactsSlice';
+import css from './ContactList.module.css';
 
 const ContactList = () => {
   const contacts = useSelector(state => state.contacts);
@@ -16,11 +16,13 @@ const ContactList = () => {
   };
 
   return (
-    <ul>
+    <ul className={css.list}>
       {filteredContacts.map(contact => (
-        <li key={contact.id}>
+        <li key={contact.id} className={css.item}>
           {contact.name}: {contact.number}
-          <button onClick={() => handleDelete(contact.id)}>Delete</button>
+          <button onClick={() => handleDelete(contact.id)} className={css.btn}>
+            Delete
+          </button>
         </li>
       ))}
     </ul>

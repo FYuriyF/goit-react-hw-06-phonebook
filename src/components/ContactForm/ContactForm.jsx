@@ -1,53 +1,75 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from '../../store/contactsSlice';
+import css from './ContactForm.module.css';
 
 const ContactForm = () => {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-
+  const [formData, setFormData] = useState({ name: '', number: '' });
+  const [error, setError] = useState('');
+  const contacts = useSelector(state => state.contacts);
   const dispatch = useDispatch();
 
-  const handleSubmit = e => {
-    e.preventDefault();
+  const handleChange = event => {
+    const { name, value } = event.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-    if (name.trim() === '' || number.trim() === '') {
-      alert('Please enter name and number');
+  const handleSubmit = event => {
+    event.preventDefault();
+
+    const { name, number } = formData;
+
+    const isDuplicateContact = contacts.some(
+      contact =>
+        contact.name.toLowerCase() === name.toLowerCase() ||
+        contact.number === number
+    );
+
+    if (isDuplicateContact) {
+      setError('Contact already exists');
       return;
     }
 
-    const newContact = {
-      id: uuidv4(),
-      name,
-      number,
-    };
+    dispatch(addContact({ name, number }));
+    resetForm();
+  };
 
-    dispatch(addContact(newContact));
-
-    setName('');
-    setNumber('');
+  const resetForm = () => {
+    setFormData({ name: '', number: '' });
+    setError('');
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
+    <form className={css.form} onSubmit={handleSubmit}>
+      <label className={css.label}>
         Name
         <input
+          className={css.inputName}
           type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
         />
       </label>
-      <label>
+      <label className={css.label}>
         Number
         <input
-          type="text"
-          value={number}
-          onChange={e => setNumber(e.target.value)}
+          className={css.inputNumber}
+          type="tel"
+          name="number"
+          value={formData.number}
+          onChange={handleChange}
+          required
         />
       </label>
-      <button type="submit">Add Contact</button>
+      {error && <p>{error}</p>}
+      <button type="submit" className={css.btn}>
+        Add contact
+      </button>
     </form>
   );
 };

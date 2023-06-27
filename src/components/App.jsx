@@ -4,15 +4,16 @@ import { store, persistor } from '../store/store';
 import ContactForm from './ContactForm';
 import Filter from './Filter';
 import ContactList from './ContactList';
+import css from '../components/App.module.css';
 
 function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <div>
-          <h1>Книга контактов</h1>
+          <h1 className={css.title}>Phonebook</h1>
           <ContactForm />
-          <h2>Контакты</h2>
+          <h2 className={css.title}>Contacts</h2>
           <Filter />
           <ContactList />
         </div>
