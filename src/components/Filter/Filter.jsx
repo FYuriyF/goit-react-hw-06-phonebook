@@ -1,10 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { updateFilter } from '../../store/filterSlice';
-import { selectFilter } from '../../store/useSelector';
 import css from './Filter.module.css';
 
 const Filter = () => {
-  const filter = useSelector(selectFilter);
   const dispatch = useDispatch();
 
   const handleFilterChange = e => {
@@ -17,7 +15,7 @@ const Filter = () => {
         FIND CONTACTS BY NAME
         <input
           type="text"
-          value={filter}
+          name="filter"
           onChange={handleFilterChange}
           className={css.inputName}
         />
