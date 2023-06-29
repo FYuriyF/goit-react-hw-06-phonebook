@@ -14,21 +14,12 @@ const contactsSlice = createSlice({
         return {
           payload: {
             id: nanoid(),
-            name: contactData.name,
-            number: contactData.number,
+            ...contactData,
           },
         };
       },
     },
 
-    //   (state, action) => {
-    //   const newContact = {
-    //     id: nanoid(),
-    //     name: action.payload.name,
-    //     number: action.payload.number,
-    //   };
-    //   state.push(newContact);
-    // },
     deleteContact: (state, action) => {
       return state.filter(contact => contact.id !== action.payload);
     },
